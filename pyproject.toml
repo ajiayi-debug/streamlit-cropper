@@ -1,6 +1,6 @@
 [project]
 name = "streamlit-cropper-fix"
-version = "0.2.7"
+version = "0.2.8"
 authors = [{name="Jia Yi", email="e0774928@u.nus.edu"}]
 description = "A simple image cropper for Streamlit, with fixes added"
 readme = "README.md"
