@@ -193,6 +193,8 @@ def st_cropper(img_file: Image, realtime_update: bool = True, default_coords: Op
         rect['top'] = max(0, int(rect['top'] * resized_ratio_h))
         rect['width'] = min(orig_file.size[0] - rect['left'], int(rect['width'] * resized_ratio_w))
         rect['height'] = min(orig_file.size[1] - rect['top'], int(rect['height'] * resized_ratio_h))
+    rect['width'] -= stroke_width
+    rect['height'] -= stroke_width
 
     # Return the value desired by the return_type
     if return_type.lower() == 'image':
