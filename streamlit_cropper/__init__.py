@@ -23,17 +23,17 @@ def _resize_img(img: Image, max_height: int = 700, max_width: int = 700) -> Imag
     # we should use that instead.
     if img.height > max_height:
         ratio = max_height / img.height
-        img = img.resize((int(img.width * ratio), int(img.height * ratio)))
+        img = img.resize((round(img.width * ratio), round(img.height * ratio)))
     if img.width > max_width:
         ratio = max_width / img.width
-        img = img.resize((int(img.width * ratio), int(img.height * ratio)))
+        img = img.resize((round(img.width * ratio), round(img.height * ratio)))
     return img
 
 
 def _recommended_box(img: Image, aspect_ratio: tuple = None) -> dict:
     # Find a recommended box for the image (could be replaced with image detection)
     box = (img.width * 0.2, img.height * 0.2, img.width * 0.8, img.height * 0.8)
-    box = [int(i) for i in box]
+    box = [round(i) for i in box]
     height = box[3] - box[1]
     width = box[2] - box[0]
 
@@ -43,11 +43,11 @@ def _recommended_box(img: Image, aspect_ratio: tuple = None) -> dict:
         height = (box[3] - box[1])
         current_aspect = width / height
         if current_aspect > ideal_aspect:
-            new_width = int(ideal_aspect * height)
+            new_width = round(ideal_aspect * height)
             offset = (width - new_width) // 2
             resize = (offset, 0, -offset, 0)
         else:
-            new_height = int(width / ideal_aspect)
+            new_height = round(width / ideal_aspect)
             offset = (height - new_height) // 2
             resize = (0, offset, 0, -offset)
         box = [box[i] + resize[i] for i in range(4)]
@@ -64,7 +64,7 @@ def _recommended_box(img: Image, aspect_ratio: tuple = None) -> dict:
         top = box[1]
         width = box[2] - box[0]
         height = box[3] - box[1]
-    return {'left': int(left), 'top': int(top), 'width': int(width), 'height': int(height)}
+    return {'left': round(left), 'top': round(top), 'width': round(width), 'height': round(height)}
 
 def _get_cropped_image(img_file:Image, should_resize_image:bool, orig_file: Image, rect: dict):
     # Return a cropped image.
@@ -112,7 +112,7 @@ def st_cropper(img_file: Image, realtime_update: bool = True, default_coords: Op
     should_resize_image: bool
         A boolean to select whether the input image should be resized. As default the image
         will be resized to 700x700 pixel for streamlit display. Set to false when using
-        custom box_algorithm.
+        custom box_algorithm. (fixed)
     stroke_width: int
         The width of the bounding box
 
@@ -133,13 +133,13 @@ def st_cropper(img_file: Image, realtime_update: bool = True, default_coords: Op
 
     resized_ratio_w = 1
     resized_ratio_h = 1
+    orig_file = img_file.copy()
 
     # Load the image and resize to be no wider than the streamlit widget size
     if should_resize_image:
-        resized_img = _resize_img(img_file)
-        resized_ratio_w = img_file.width / resized_img.width
-        resized_ratio_h = img_file.height / resized_img.height
-        orig_file, img_file = img_file, resized_img
+        img_file = _resize_img(img_file)
+        resized_ratio_w = orig_file.width / img_file.width
+        resized_ratio_h = orig_file.height / img_file.height
 
     if default_coords is not None:
         box = {'left': default_coords[0] // resized_ratio_w,

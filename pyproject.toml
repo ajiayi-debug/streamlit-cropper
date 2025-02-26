@@ -1,8 +1,8 @@
 [project]
-name = "streamlit-cropper"
-version = "0.2.2"
-authors = [{name="Turner Anderson", email="andersontur11@gmail.com"}]
-description = "A simple image cropper for Streamlit"
+name = "streamlit-cropper-fix"
+version = "0.2.3"
+authors = [{name="Jia Yi", email="e0774928@u.nus.edu"}]
+description = "A simple image cropper for Streamlit, with fixes added"
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
@@ -17,8 +17,8 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/turner-anderson/streamlit-cropper"
-"Bug Tracker" = "https://github.com/turner-anderson/streamlit-cropper/issues"
+"Homepage" = "https://github.com/ajiayi-debug/streamlit-cropper"
+"Bug Tracker" = "https://github.com/ajiayi-debug/streamlit-cropper/issues"
 
 [build-system]
 requires = ["setuptools>=61.0",

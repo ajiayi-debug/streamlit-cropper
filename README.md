@@ -1,13 +1,13 @@
 # Streamlit - Cropper
 
-A streamlit custom component for easy image cropping
+A Forked version of the original [streamlit-cropper](https://github.com/turner-anderson/streamlit-cropper), with added fixes to `should_resize_image`
 
 ![](./demo.gif)
 
 ## Installation
 
 ```shell script
-pip install streamlit-cropper
+pip install streamlit-cropper-fix
 ```
 
 ## Example Usage
@@ -48,9 +48,9 @@ if img_file:
 ```
 
 ## References
-
+- [streamlit-cropper](https://github.com/turner-anderson/streamlit-cropper)
 - [streamlit-drawable-canvas](https://github.com/andfanilo/streamlit-drawable-canvas)
 
 ## Acknowledgments
 
-Big thanks to zoncrd and yanirs for their contributions
+Big thanks to Turner Anderson, zoncrd and yanirs for their contributions
