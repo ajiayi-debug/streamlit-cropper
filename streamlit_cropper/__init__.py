@@ -23,17 +23,17 @@ def _resize_img(img: Image, max_height: int = 700, max_width: int = 700) -> Imag
     # we should use that instead.
     if img.height > max_height:
         ratio = max_height / img.height
-        img = img.resize((int(img.width * ratio), int(img.height * ratio)))
+        img = img.resize((round(img.width * ratio), round(img.height * ratio)))
     if img.width > max_width:
         ratio = max_width / img.width
-        img = img.resize((int(img.width * ratio), int(img.height * ratio)))
+        img = img.resize((round(img.width * ratio), round(img.height * ratio)))
     return img
 
 
 def _recommended_box(img: Image, aspect_ratio: tuple = None) -> dict:
     # Find a recommended box for the image (could be replaced with image detection)
     box = (img.width * 0.2, img.height * 0.2, img.width * 0.8, img.height * 0.8)
-    box = [int(i) for i in box]
+    box = [round(i) for i in box]
     height = box[3] - box[1]
     width = box[2] - box[0]
 
@@ -43,11 +43,11 @@ def _recommended_box(img: Image, aspect_ratio: tuple = None) -> dict:
         height = (box[3] - box[1])
         current_aspect = width / height
         if current_aspect > ideal_aspect:
-            new_width = int(ideal_aspect * height)
+            new_width = round(ideal_aspect * height)
             offset = (width - new_width) // 2
             resize = (offset, 0, -offset, 0)
         else:
-            new_height = int(width / ideal_aspect)
+            new_height = round(width / ideal_aspect)
             offset = (height - new_height) // 2
             resize = (0, offset, 0, -offset)
         box = [box[i] + resize[i] for i in range(4)]
@@ -64,7 +64,7 @@ def _recommended_box(img: Image, aspect_ratio: tuple = None) -> dict:
         top = box[1]
         width = box[2] - box[0]
         height = box[3] - box[1]
-    return {'left': int(left), 'top': int(top), 'width': int(width), 'height': int(height)}
+    return {'left': round(left), 'top': round(top), 'width': round(width), 'height': round(height)}
 
 def _get_cropped_image(img_file:Image, should_resize_image:bool, orig_file: Image, rect: dict):
     # Return a cropped image.
@@ -189,10 +189,10 @@ def st_cropper(img_file: Image, realtime_update: bool = True, default_coords: Op
 
     # Scale box according to the resize ratio, but make sure new box does not exceed original bounds
     if should_resize_image:
-        rect['left'] = max(0, int(rect['left'] * resized_ratio_w))
-        rect['top'] = max(0, int(rect['top'] * resized_ratio_h))
-        rect['width'] = min(orig_file.size[0] - rect['left'], int(rect['width'] * resized_ratio_w))
-        rect['height'] = min(orig_file.size[1] - rect['top'], int(rect['height'] * resized_ratio_h))
+        rect['left'] = max(0, round(rect['left'] * resized_ratio_w))
+        rect['top'] = max(0, round(rect['top'] * resized_ratio_h))
+        rect['width'] = min(orig_file.size[0] - rect['left'], round(rect['width'] * resized_ratio_w))
+        rect['height'] = min(orig_file.size[1] - rect['top'], round(rect['height'] * resized_ratio_h))
     rect['width'] -= stroke_width
     rect['height'] -= stroke_width
 
