@@ -1,6 +1,10 @@
 # Streamlit - Cropper
 
-A Forked version of the original [streamlit-cropper](https://github.com/turner-anderson/streamlit-cropper), with added fixes to `should_resize_image`
+A Forked version of the original [streamlit-cropper](https://github.com/turner-anderson/streamlit-cropper), with added fixes 
+# Fixes:
+1) `should_resize_image=False` now works
+2) Using manual box_function in box_algorithm will hence work as well
+3) Remove stroke width from overall crop dimension
 
 ![](./demo.gif)
 
