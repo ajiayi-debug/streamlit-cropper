@@ -1,3 +1,4 @@
+
 import React, {useEffect, useState} from 'react';
 import {ComponentProps, Streamlit, withStreamlitConnection} from "./streamlit";
 import {fabric} from 'fabric';
@@ -16,39 +17,29 @@ interface PythonArgs {
     lockAspect: boolean
 }
 
-
 const StreamlitCropper = (props: ComponentProps) => {
     const [canvas, setCanvas] = useState(new fabric.Canvas(""))
     const {canvasWidth, canvasHeight, imageData}: PythonArgs = props.args
-    /*
-    * Translate Python image data to a JavaScript Image
-    */
+
+    // Create an off-screen canvas and convert imageData to a data URL
     var invisCanvas = document.createElement("canvas")
     var ctx = invisCanvas.getContext('2d')
-
     invisCanvas.width = canvasWidth
     invisCanvas.height = canvasHeight
 
-    // create imageData object
     if (ctx) {
-    var idata = ctx.createImageData(canvasWidth, canvasHeight);
-
-    // set our buffer as source
-    idata.data.set(imageData);
-
-    // update canvas with new data
-    ctx.putImageData(idata, 0, 0);
-    var dataUri = invisCanvas.toDataURL()
-    }
-    else {
-        // eslint-disable-next-line
-        var dataUri = ""
+      var idata = ctx.createImageData(canvasWidth, canvasHeight);
+      idata.data.set(imageData);
+      ctx.putImageData(idata, 0, 0);
+      var dataUri = invisCanvas.toDataURL()
+    } else {
+      var dataUri = ""
     }
     
     /**
      * Initialize canvas on mount and add a rectangle
      */
-    useEffect  (() => {
+    useEffect(() => {
         const {rectTop, rectLeft, rectWidth, rectHeight, boxColor, strokeWidth, lockAspect}: PythonArgs = props.args
         const canvas = new fabric.Canvas('c', {
             enableRetinaScaling: false,
@@ -66,42 +57,46 @@ const StreamlitCropper = (props: ComponentProps) => {
             stroke: boxColor,
             strokeWidth: strokeWidth,
             hasRotatingPoint: false
-
-          });
+        });
         canvas.add(rect)
 
         setCanvas(canvas)
         Streamlit.setFrameHeight()
-        // eslint-disable-next-line
     }, [canvasHeight, canvasWidth]);
-
 
     /**
      * On update (either realtime or doubleclick), send the coordinates of the rectangle
-     * back to streamlit.
+     * back to streamlit, adjusting to remove the stroke width.
      */
     useEffect(() => {
         const {realtimeUpdate}: PythonArgs = props.args
-        if (!canvas) {
-            return;
-        }
+        if (!canvas) return;
+        
         const handleEvent = () => {
-            canvas.renderAll()
-            const coords = canvas.getObjects()[0].getBoundingRect()
-            Streamlit.setComponentValue({coords:coords})
+            canvas.renderAll();
+            const rectObj = canvas.getObjects()[0];
+            const bounds = rectObj.getBoundingRect();
+            const stroke = rectObj.strokeWidth || 0;
+            // Adjust coordinates: since stroke is drawn centered, subtract full stroke from width/height.
+            const adjustedCoords = {
+              left: bounds.left,
+              top: bounds.top,
+              width: bounds.width - stroke,
+              height: bounds.height - stroke
+            };
+            Streamlit.setComponentValue({coords: adjustedCoords});
         }
         
         if (realtimeUpdate) {
-        canvas.on("object:modified", handleEvent)
-        return () => {
-            canvas.off("object:modified");
-        }
-        }
-        else {
-        canvas.on("mouse:dblclick", handleEvent)
-        return () => {
-            canvas.off("mouse:dblclick");
-        }
+            canvas.on("object:modified", handleEvent)
+            return () => {
+                canvas.off("object:modified", handleEvent);
+            }
+        } else {
+            canvas.on("mouse:dblclick", handleEvent)
+            return () => {
+                canvas.off("mouse:dblclick", handleEvent);
+            }
         }
     })
 
@@ -113,3 +108,5 @@ const StreamlitCropper = (props: ComponentProps) => {
 };
 
 export default withStreamlitConnection(StreamlitCropper);
+
+
