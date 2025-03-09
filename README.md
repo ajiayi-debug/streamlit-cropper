@@ -9,7 +9,7 @@ A Forked version of the original [streamlit-cropper](https://github.com/turner-a
 # Features
 1) You can now type in a fixed dimension for the cropper to crop
 
-![](./demo.gif)
+
 
 ## Installation
 
